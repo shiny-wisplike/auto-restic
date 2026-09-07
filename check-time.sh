@@ -8,7 +8,7 @@ checkDay() {
   CURRENT_DAY=$(date +"%a")
   CURRENT_DAY_LOWER=${CURRENT_DAY,,}
 
-  while IFS='|' read csv_day csv_time; do
+  while IFS='|' read $CSV_FIELDS; do
     if [[ "$CURRENT_DAY_LOWER" == "$csv_day" ]]; then
       echo "Current day matches with scheduled day!"
       IS_MATCH="true"
