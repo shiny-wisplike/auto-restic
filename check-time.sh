@@ -3,44 +3,36 @@
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
 CSV_FIELDS="csv_day csv_time"
 
+checkTime() {
+  CURRENT_TIME=$(date +"%H:%M")
+  CSV_ROW="$1"
+
+  IFS='|' read -r $CSV_FIELDS <<< "$CSV_ROW"
+
+  if [[ "$CURRENT_TIME" == "$csv_time" ]]; then
+    echo "Current time matches with scheduled time!"
+  else
+    echo "Time does not match!"
+  fi
+}
+
 checkDay() {
-  IS_MATCH="false"
   CURRENT_DAY=$(date +"%a")
   CURRENT_DAY_LOWER=${CURRENT_DAY,,}
 
   while IFS='|' read $CSV_FIELDS; do
     if [[ "$CURRENT_DAY_LOWER" == "$csv_day" ]]; then
       echo "Current day matches with scheduled day!"
-      IS_MATCH="true"
-      break
+
+      CSV_ROW=""
+      for field in $CSV_FIELDS; do
+        CSV_ROW+="${!field}|"
+      done
+      CSV_ROW="${CSV_ROW%|}"
+
+      checkTime "$CSV_ROW"
     fi
   done < "${PROJECT_FOLDER}/db/schedule.csv"
-
-  if [[ "$IS_MATCH" == "true" ]]; then
-    return
-  else
-    exit
-  fi
-}
-
-checkTime() {
-  IS_MATCH="false"
-  CURRENT_TIME=$(date +"%H:%M")
-
-  while IFS="|" read -r $CSV_FIELDS; do
-    if [[ "$CURRENT_TIME" == "$csv_time" ]]; then
-      echo "Current time matches with scheduled time!"
-      IS_MATCH="true"
-      break
-    fi
-  done < "${PROJECT_FOLDER}/db/schedule.csv"
-
-  if [[ "$IS_MATCH" == "true" ]]; then
-    return
-  else
-    exit
-  fi
 }
 
 checkDay
-checkTime
