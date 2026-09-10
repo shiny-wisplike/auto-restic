@@ -1,7 +1,19 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-CSV_FIELDS="csv_day csv_time"
+CSV_FIELDS="csv_day csv_time csv_action csv_source csv_tag csv_repo"
+
+executeAction() {
+  CSV_ROW="$1"
+
+  IFS='|' read -r $CSV_FIELDS <<< "$CSV_ROW"
+
+  case "$csv_action" in
+    "backup")
+      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "backup" "$csv_source" "$csv_tag" "$csv_repo"
+      ;;
+  esac
+}
 
 checkTime() {
   CURRENT_TIME=$(date +"%H:%M")
@@ -11,6 +23,8 @@ checkTime() {
 
   if [[ "$CURRENT_TIME" == "$csv_time" ]]; then
     echo "Current time matches with scheduled time!"
+
+    executeAction "$CSV_ROW"
   else
     echo "Time does not match!"
   fi

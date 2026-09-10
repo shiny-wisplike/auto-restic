@@ -18,13 +18,15 @@ backup() {
 
 source "${PROJECT_FOLDER}/.env"
 
-echo "Please enter the backup repo: "
-read BACKUP_REPO
+case "$1" in
+  "backup")
+    SOURCE_LOCATION="$2"
+    SOURCE_TAG="$3"
+    BACKUP_REPO="$4"
 
-echo "Please enter a tag name for the backup: "
-read SOURCE_TAG
-
-echo "Please enter the folder you want to backup: "
-read SOURCE_LOCATION
-
-backup
+    backup
+    ;;
+  *)
+    echo "Unknown action. Please try again!"
+    ;;
+esac
