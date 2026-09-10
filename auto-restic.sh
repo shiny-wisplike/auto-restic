@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
+SCRIPT_VERSION="0.4.1"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -17,6 +18,13 @@ backup() {
 }
 
 source "${PROJECT_FOLDER}/.env"
+
+if [ -z "${USERNAME}" ]; then
+  USERNAME="shiny-wisplike"
+fi
+
+echo "Welcome to ${USERNAME}'s auto-restic script - v${SCRIPT_VERSION}"
+echo ""
 
 case "$1" in
   "backup")
