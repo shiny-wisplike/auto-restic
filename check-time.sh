@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-CSV_FIELDS="csv_day csv_time csv_action csv_source csv_tag csv_repo"
+CSV_FIELDS="csv_days csv_time csv_action csv_source csv_tag csv_repo"
 
 executeAction() {
   CSV_ROW="$1"
@@ -35,17 +35,23 @@ checkDay() {
   CURRENT_DAY_LOWER=${CURRENT_DAY,,}
 
   while IFS='|' read $CSV_FIELDS; do
-    if [[ "$CURRENT_DAY_LOWER" == "$csv_day" ]]; then
-      echo "Current day matches with scheduled day!"
+    IFS=',' read -ra DAYS_ARRAY <<< "$csv_days"
 
-      CSV_ROW=""
-      for field in $CSV_FIELDS; do
-        CSV_ROW+="${!field}|"
-      done
-      CSV_ROW="${CSV_ROW%|}"
+    for day in "${DAYS_ARRAY[@]}"; do
+      CLEAN_DAY=$(echo "$day" | xargs | tr '[:upper:]' '[:lower:]')
 
-      checkTime "$CSV_ROW"
-    fi
+      if [[ "$CURRENT_DAY_LOWER" == "$CLEAN_DAY" ]]; then
+        echo "Current day matches with scheduled day!"
+
+        CSV_ROW=""
+        for field in $CSV_FIELDS; do
+          CSV_ROW+="${!field}|"
+        done
+        CSV_ROW="${CSV_ROW%|}"
+
+        checkTime "$CSV_ROW"
+      fi
+    done
   done < "${PROJECT_FOLDER}/db/schedule.csv"
 }
 
