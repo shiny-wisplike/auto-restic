@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.7.0"
+SCRIPT_VERSION="0.7.1"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
