@@ -1,10 +1,19 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.6.0"
+SCRIPT_VERSION="0.7.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
+
+notifyUser() {
+  MESSAGE="$SOURCE_TAG has been backed up to $BACKUP_REPO successfully!"
+
+  curl -X POST "${GOTIFY_ADDRESS}/message?token=${GOTIFY_TOKEN}" \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d "{  \"message\": \"$MESSAGE\",  \"priority\": 0,  \"title\": \"$GOTIFY_TITLE\"}"
+}
 
 backup() {
   restic \
@@ -34,6 +43,7 @@ case "$1" in
     BACKUP_REPO="$4"
 
     backup
+    notifyUser
     ;;
   *)
     echo "Unknown action. Please try again!"
