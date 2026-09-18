@@ -1,10 +1,11 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.7.1"
+SCRIPT_VERSION="0.7.2"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
+RESTIC_EXEC="/usr/local/bin/restic"
 
 notifyUser() {
   MESSAGE="$SOURCE_TAG has been backed up to $BACKUP_REPO successfully!"
@@ -16,7 +17,7 @@ notifyUser() {
 }
 
 backup() {
-  restic \
+  "$RESTIC_EXEC" \
   --host "$HOSTNAME" \
   -r "$BACKUP_REPO" \
   --verbose \
