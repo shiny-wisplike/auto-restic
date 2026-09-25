@@ -1,10 +1,11 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.7.2"
+SCRIPT_VERSION="0.7.3"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
+RESTIC_KEY=""
 RESTIC_EXEC="/usr/local/bin/restic"
 
 notifyUser() {
@@ -42,6 +43,7 @@ case "$1" in
     SOURCE_LOCATION="$2"
     SOURCE_TAG="$3"
     BACKUP_REPO="$4"
+    RESTIC_KEY="$5"
 
     backup
     notifyUser

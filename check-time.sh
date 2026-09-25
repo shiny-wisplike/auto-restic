@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-CSV_FIELDS="csv_days csv_time csv_action csv_source csv_tag csv_repo"
+CSV_FIELDS="csv_days csv_time csv_action csv_source csv_tag csv_repo csv_repo_key"
 
 executeAction() {
   CSV_ROW="$1"
@@ -10,7 +10,7 @@ executeAction() {
 
   case "$csv_action" in
     "backup")
-      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "backup" "$csv_source" "$csv_tag" "$csv_repo"
+      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "backup" "$csv_source" "$csv_tag" "$csv_repo" "$csv_repo_key"
       ;;
   esac
 }
