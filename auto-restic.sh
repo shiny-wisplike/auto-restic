@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.7.3"
+SCRIPT_VERSION="0.7.4"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -39,7 +39,7 @@ echo "Welcome to ${USERNAME}'s auto-restic script - v${SCRIPT_VERSION}"
 echo ""
 
 case "$1" in
-  "backup")
+  "a")
     SOURCE_LOCATION="$2"
     SOURCE_TAG="$3"
     BACKUP_REPO="$4"
@@ -49,6 +49,6 @@ case "$1" in
     notifyUser
     ;;
   *)
-    echo "Unknown action. Please try again!"
+    echo "Unknown mode. Please try again!"
     ;;
 esac
