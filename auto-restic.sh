@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.7.4"
+SCRIPT_VERSION="0.8.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -29,6 +29,22 @@ backup() {
   "$SOURCE_LOCATION"
 }
 
+selectActionMenu() {
+  echo ""
+  echo "Please select an action: "
+  echo "  1 - Backup"
+  read -p "Selection: " SELECTED_ACTION
+
+  case "$SELECTED_ACTION" in
+    "1")
+      echo "Selected: Backup"
+      ;;
+    *)
+      echo "Unknown selection!"
+      ;;
+  esac
+}
+
 source "${PROJECT_FOLDER}/.env"
 
 if [ -z "${USERNAME}" ]; then
@@ -39,6 +55,8 @@ echo "Welcome to ${USERNAME}'s auto-restic script - v${SCRIPT_VERSION}"
 echo ""
 
 case "$1" in
+  "m")
+    selectActionMenu
   "a")
     SOURCE_LOCATION="$2"
     SOURCE_TAG="$3"
