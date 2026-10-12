@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.9.0"
+SCRIPT_VERSION="0.10.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -29,15 +29,55 @@ backup() {
   "$SOURCE_LOCATION"
 }
 
+viewSnapshots() {
+  "$RESTIC_EXEC" \
+  --host "$HOSTNAME" \
+  -r "$BACKUP_REPO" \
+  --verbose \
+  --password-file "$RESTIC_KEY" \
+  snapshots
+}
+
+viewSnapshotsMenu() {
+  IS_REPO_EXIST="false"
+
+  while true; do
+    echo "Please enter the repo name: "
+    read REPO_NAME
+
+    while IFS='|' read repo_csv_repo_name repo_csv_repo_path repo_csv_repo_key; do
+      if [[ "$REPO_NAME" == "$repo_csv_repo_name" ]]; then
+        BACKUP_REPO="$repo_csv_repo_path"
+        RESTIC_KEY="$repo_csv_repo_key"
+        IS_REPO_EXIST="true"
+        break
+      fi
+    done < "${PROJECT_FOLDER}/db/repos.csv"
+
+    if [[ "$IS_REPO_EXIST" == "false" ]]; then
+      echo "Repo name is unknown. Please try again!"
+      continue
+    else
+      break
+    fi
+  done
+
+  viewSnapshots
+}
+
 selectActionMenu() {
   echo ""
   echo "Please select an action: "
   echo "  1 - Backup"
+  echo "  2 - View Snapshots"
   read -p "Selection: " SELECTED_ACTION
 
   case "$SELECTED_ACTION" in
     "1")
       echo "Selected: Backup"
+      ;;
+    "2")
+      viewSnapshotsMenu
       ;;
     *)
       echo "Unknown selection!"
