@@ -8,9 +8,18 @@ executeAction() {
 
   IFS='|' read -r $CSV_FIELDS <<< "$CSV_ROW"
 
+  while IFS="|" read -r repo_csv_repo_name repo_csv_repo_path; do
+    if [[ "$repo_csv_repo_name" == "$csv_repo" ]]; then
+      break
+    else
+      echo "Repo name $csv_repo does not exist!"
+      return
+    fi
+  done < "${PROJECT_FOLDER}/db/repos.csv"
+
   case "$csv_action" in
     "backup")
-      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "a" "$csv_source" "$csv_tag" "$csv_repo" "$csv_repo_key"
+      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "a" "$csv_source" "$csv_tag" "$repo_csv_repo_path" "$csv_repo_key"
       ;;
   esac
 }
