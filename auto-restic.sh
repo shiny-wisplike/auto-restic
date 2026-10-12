@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.8.2"
+SCRIPT_VERSION="0.8.3"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -57,6 +57,7 @@ echo ""
 case "$1" in
   "m")
     selectActionMenu
+    ;;
   "a")
     SOURCE_LOCATION="$2"
     SOURCE_TAG="$3"
