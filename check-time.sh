@@ -5,17 +5,21 @@ CSV_FIELDS="csv_days csv_time csv_action csv_source csv_tag csv_repo csv_repo_ke
 
 executeAction() {
   CSV_ROW="$1"
+  IS_REPO_EXIST="false"
 
   IFS='|' read -r $CSV_FIELDS <<< "$CSV_ROW"
 
   while IFS="|" read -r repo_csv_repo_name repo_csv_repo_path; do
     if [[ "$repo_csv_repo_name" == "$csv_repo" ]]; then
+      IS_REPO_EXIST="true"
       break
-    else
-      echo "Repo name $csv_repo does not exist!"
-      return
     fi
   done < "${PROJECT_FOLDER}/db/repos.csv"
+
+  if [[ "$IS_REPO_EXIST" == "false" ]]; then
+    echo "Repo name $csv_repo does not exist!"
+    return
+  fi
 
   case "$csv_action" in
     "backup")
