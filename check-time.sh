@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-CSV_FIELDS="csv_days csv_time csv_action csv_source csv_tag csv_repo csv_repo_key"
+CSV_FIELDS="csv_days csv_time csv_action csv_source csv_tag csv_repo"
 
 executeAction() {
   CSV_ROW="$1"
@@ -9,7 +9,7 @@ executeAction() {
 
   IFS='|' read -r $CSV_FIELDS <<< "$CSV_ROW"
 
-  while IFS="|" read -r repo_csv_repo_name repo_csv_repo_path; do
+  while IFS="|" read -r repo_csv_repo_name repo_csv_repo_path repo_csv_repo_key; do
     if [[ "$repo_csv_repo_name" == "$csv_repo" ]]; then
       IS_REPO_EXIST="true"
       break
@@ -23,7 +23,7 @@ executeAction() {
 
   case "$csv_action" in
     "backup")
-      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "a" "$csv_source" "$csv_tag" "$repo_csv_repo_path" "$csv_repo_key"
+      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "a" "$csv_source" "$csv_tag" "$repo_csv_repo_path" "$repo_csv_repo_key"
       ;;
   esac
 }
