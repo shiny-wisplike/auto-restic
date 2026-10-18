@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.10.0"
+SCRIPT_VERSION="0.11.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -65,11 +65,26 @@ viewSnapshotsMenu() {
   viewSnapshots
 }
 
+addNewRepo() {
+  echo ""
+  echo "Please enter the repo name: "
+  read NEW_REPO_NAME
+
+  echo "Please enter the repo path: "
+  read NEW_REPO_PATH
+
+  echo "Please enter the repo key path: "
+  read NEW_REPO_KEY_PATH
+
+  echo "${NEW_REPO_NAME}|${NEW_REPO_PATH}|${NEW_REPO_KEY_PATH}" >> "${PROJECT_FOLDER}/db/repos.csv"
+}
+
 selectActionMenu() {
   echo ""
   echo "Please select an action: "
   echo "  1 - Backup"
   echo "  2 - View Snapshots"
+  echo "  3 - Add New Repo"
   read -p "Selection: " SELECTED_ACTION
 
   case "$SELECTED_ACTION" in
@@ -78,6 +93,9 @@ selectActionMenu() {
       ;;
     "2")
       viewSnapshotsMenu
+      ;;
+    "3")
+      addNewRepo
       ;;
     *)
       echo "Unknown selection!"
