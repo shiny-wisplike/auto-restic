@@ -1,12 +1,13 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.11.0"
+SCRIPT_VERSION="0.12.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
 RESTIC_KEY=""
 RESTIC_EXEC="/usr/local/bin/restic"
+IS_REPO_EXIST="false"
 
 notifyUser() {
   MESSAGE="$SOURCE_TAG has been backed up to $BACKUP_REPO successfully!"
@@ -15,6 +16,17 @@ notifyUser() {
     -H "accept: application/json" \
     -H "Content-Type: application/json" \
     -d "{  \"message\": \"$MESSAGE\",  \"priority\": 0,  \"title\": \"$GOTIFY_TITLE\"}"
+}
+
+checkRepoExist() {
+  while IFS='|' read repo_csv_repo_name repo_csv_repo_path repo_csv_repo_key; do
+    if [[ "$1" == "$repo_csv_repo_name" ]]; then
+      BACKUP_REPO="$repo_csv_repo_path"
+      RESTIC_KEY="$repo_csv_repo_key"
+      IS_REPO_EXIST="true"
+      break
+    fi
+  done < "${PROJECT_FOLDER}/db/repos.csv"
 }
 
 backup() {
@@ -39,20 +51,11 @@ viewSnapshots() {
 }
 
 viewSnapshotsMenu() {
-  IS_REPO_EXIST="false"
-
   while true; do
     echo "Please enter the repo name: "
     read REPO_NAME
 
-    while IFS='|' read repo_csv_repo_name repo_csv_repo_path repo_csv_repo_key; do
-      if [[ "$REPO_NAME" == "$repo_csv_repo_name" ]]; then
-        BACKUP_REPO="$repo_csv_repo_path"
-        RESTIC_KEY="$repo_csv_repo_key"
-        IS_REPO_EXIST="true"
-        break
-      fi
-    done < "${PROJECT_FOLDER}/db/repos.csv"
+    checkRepoExist "$REPO_NAME"
 
     if [[ "$IS_REPO_EXIST" == "false" ]]; then
       echo "Repo name is unknown. Please try again!"
@@ -63,6 +66,31 @@ viewSnapshotsMenu() {
   done
 
   viewSnapshots
+}
+
+backupMenu() {
+  echo ""
+  echo "Please enter the folder path you want to backup: "
+  read SOURCE_LOCATION
+
+  echo "Please enter the tag for this snapshot: "
+  read SOURCE_TAG
+
+  while true: do
+    echo "Please enter the name of the backup repo: "
+    read REPO_NAME
+
+    checkRepoExist "$REPO_NAME"
+
+    if [[ "$IS_REPO_EXIST" == "false" ]]; then
+      echo "Repo name is unknown. Please try again!"
+      continue
+    else
+      break
+    fi
+  done
+
+  backup
 }
 
 addNewRepo() {
@@ -90,6 +118,7 @@ selectActionMenu() {
   case "$SELECTED_ACTION" in
     "1")
       echo "Selected: Backup"
+      backupMenu
       ;;
     "2")
       viewSnapshotsMenu
