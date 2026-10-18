@@ -23,7 +23,7 @@ executeAction() {
 
   case "$csv_action" in
     "backup")
-      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "a" "$csv_source" "$csv_tag" "$repo_csv_repo_path" "$repo_csv_repo_key"
+      /bin/bash "${PROJECT_FOLDER}/auto-restic.sh" "a" "$csv_source" "$csv_tag" "$repo_csv_repo_path" "$repo_csv_repo_key" "$repo_csv_repo_name"
       ;;
   esac
 }

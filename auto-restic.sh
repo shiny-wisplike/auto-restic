@@ -1,16 +1,17 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.12.0"
+SCRIPT_VERSION="0.12.1"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
 RESTIC_KEY=""
 RESTIC_EXEC="/usr/local/bin/restic"
 IS_REPO_EXIST="false"
+BACKUP_REPO_NAME=""
 
 notifyUser() {
-  MESSAGE="$SOURCE_TAG has been backed up to $BACKUP_REPO successfully!"
+  MESSAGE="$SOURCE_TAG has been backed up to $BACKUP_REPO_NAME successfully!"
 
   curl -X POST "${GOTIFY_ADDRESS}/message?token=${GOTIFY_TOKEN}" \
     -H "accept: application/json" \
@@ -150,6 +151,7 @@ case "$1" in
     SOURCE_TAG="$3"
     BACKUP_REPO="$4"
     RESTIC_KEY="$5"
+    BACKUP_REPO_NAME="$6"
 
     backup
     notifyUser
