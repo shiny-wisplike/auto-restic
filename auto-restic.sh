@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.12.1"
+SCRIPT_VERSION="0.12.2"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -143,7 +143,7 @@ echo "Welcome to ${USERNAME}'s auto-restic script - v${SCRIPT_VERSION}"
 echo ""
 
 case "$1" in
-  "m")
+  "m" | "")
     selectActionMenu
     ;;
   "a")
