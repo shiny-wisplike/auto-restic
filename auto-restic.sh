@@ -1,12 +1,13 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.12.2"
+SCRIPT_VERSION="0.13.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
 RESTIC_KEY=""
-RESTIC_EXEC="/usr/local/bin/restic"
+RESTIC_EXEC=""
+RESTIC_EXEC_PATH="/usr/local/bin/restic"
 IS_REPO_EXIST="false"
 BACKUP_REPO_NAME=""
 
@@ -71,6 +72,15 @@ viewSnapshotsMenu() {
 
 backupMenu() {
   echo ""
+  echo "Would you like to execute restic [n]ormally or with [s]udo? [n/s]"
+  read RESTIC_EXEC_ANSWER
+
+  if [[ "$RESTIC_EXEC_ANSWER" == "n" ]]; then
+    RESTIC_EXEC="$RESTIC_EXEC_PATH"
+  elif [[ "$RESTIC_EXEC_ANSWER" == "s" ]]; then
+    RESTIC_EXEC="sudo $RESTIC_EXEC_PATH"
+  fi
+
   echo "Please enter the folder path you want to backup: "
   read SOURCE_LOCATION
 
