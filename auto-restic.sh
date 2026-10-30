@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.13.0"
+SCRIPT_VERSION="0.13.1"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -87,7 +87,7 @@ backupMenu() {
   echo "Please enter the tag for this snapshot: "
   read SOURCE_TAG
 
-  while true: do
+  while true; do
     echo "Please enter the name of the backup repo: "
     read REPO_NAME
 
