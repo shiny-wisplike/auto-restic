@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.13.3"
+SCRIPT_VERSION="0.14.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -10,6 +10,7 @@ RESTIC_EXEC_PATH="/usr/local/bin/restic"
 RESTIC_EXEC="$RESTIC_EXEC_PATH"
 IS_REPO_EXIST="false"
 BACKUP_REPO_NAME=""
+SNAPSHOT_ID=""
 
 notifyUser() {
   MESSAGE="$SOURCE_TAG has been backed up to $BACKUP_REPO_NAME successfully!"
@@ -52,6 +53,14 @@ viewSnapshots() {
   snapshots
 }
 
+listSnapshotFiles() {
+  "$RESTIC_EXEC" \
+  -r "$BACKUP_REPO" \
+  --password-file "$RESTIC_KEY" \
+  ls \
+  "$SNAPSHOT_ID"
+}
+
 viewSnapshotsMenu() {
   while true; do
     echo "Please enter the repo name: "
@@ -68,6 +77,16 @@ viewSnapshotsMenu() {
   done
 
   viewSnapshots
+
+  echo ""
+  echo "Would you like to open a snapshot? [y/n]"
+  read OPEN_SNAPSHOT_ANSWER
+
+  if [[ "$OPEN_SNAPSHOT_ANSWER" == "y" ]]; then
+    echo "Please enter the snapshot ID: "
+    read SNAPSHOT_ID
+    listSnapshotFiles
+  fi
 }
 
 backupMenu() {
