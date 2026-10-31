@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.15.0"
+SCRIPT_VERSION="0.16.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -64,13 +64,22 @@ listSnapshotFiles() {
 }
 
 restore() {
-  "$RESTIC_EXEC" \
-  -r "$BACKUP_REPO" \
-  --password-file "$RESTIC_KEY" \
-  restore \
-  "$SNAPSHOT_ID" \
-  --target "$RESTORE_TARGET_FOLDER" \
-  --include "$RESTORE_SOURCE_PATH"
+  if [[ "$RESTORE_SOURCE_PATH" == "all" ]]; then
+    "$RESTIC_EXEC" \
+    -r "$BACKUP_REPO" \
+    --password-file "$RESTIC_KEY" \
+    restore \
+    "$SNAPSHOT_ID" \
+    --target "$RESTORE_TARGET_FOLDER"
+  else
+    "$RESTIC_EXEC" \
+    -r "$BACKUP_REPO" \
+    --password-file "$RESTIC_KEY" \
+    restore \
+    "$SNAPSHOT_ID" \
+    --target "$RESTORE_TARGET_FOLDER" \
+    --include "$RESTORE_SOURCE_PATH"
+  fi
 }
 
 viewSnapshotsMenu() {
@@ -153,7 +162,8 @@ restoreFromBackup() {
   viewSnapshotsMenu
 
   echo ""
-  echo "Please enter one of the displayed paths to restore: "
+  echo "Please enter one of the displayed paths to restore. "
+  echo "You can also enter 'all' to restore all files from the snapshot: "
   read RESTORE_SOURCE_PATH
 
   echo "Please enter the target folder to restore to: "
