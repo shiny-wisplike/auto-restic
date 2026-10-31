@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.16.0"
+SCRIPT_VERSION="0.17.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -32,6 +32,16 @@ checkRepoExist() {
       break
     fi
   done < "${PROJECT_FOLDER}/db/repos.csv"
+}
+
+selectRepoMenu() {
+  REPO_NAMES=($(cut -d '|' -f1 "${PROJECT_FOLDER}/db/repos.csv"))
+
+  select REPO_NAME in "${REPO_NAMES[@]}"; do
+    echo "Selected: $REPO_NAME"
+    checkRepoExists "$REPO_NAME"
+    break
+  done
 }
 
 backup() {
@@ -83,19 +93,7 @@ restore() {
 }
 
 viewSnapshotsMenu() {
-  while true; do
-    echo "Please enter the repo name: "
-    read REPO_NAME
-
-    checkRepoExist "$REPO_NAME"
-
-    if [[ "$IS_REPO_EXIST" == "false" ]]; then
-      echo "Repo name is unknown. Please try again!"
-      continue
-    else
-      break
-    fi
-  done
+  selectRepoMenu
 
   viewSnapshots
 
@@ -127,20 +125,7 @@ backupMenu() {
   echo "Please enter the tag for this snapshot: "
   read SOURCE_TAG
 
-  while true; do
-    echo "Please enter the name of the backup repo: "
-    read REPO_NAME
-
-    checkRepoExist "$REPO_NAME"
-
-    if [[ "$IS_REPO_EXIST" == "false" ]]; then
-      echo "Repo name is unknown. Please try again!"
-      continue
-    else
-      break
-    fi
-  done
-
+  selectRepoMenu
   backup
 }
 
