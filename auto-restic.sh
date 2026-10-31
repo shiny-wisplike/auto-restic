@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.17.0"
+SCRIPT_VERSION="0.18.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -143,6 +143,38 @@ addNewRepo() {
   echo "${NEW_REPO_NAME}|${NEW_REPO_PATH}|${NEW_REPO_KEY_PATH}" >> "${PROJECT_FOLDER}/db/repos.csv"
 }
 
+addNewSchedule() {
+  echo ""
+  echo "Please enter the day(s): "
+  echo "You can specify one day or multiple days separated with a comma"
+  echo "For monthly schedules, please enter 'any'"
+  read NEW_SCHEDULE_DAYS
+
+  echo "Please enter the time (hh:mm)"
+  read NEW_SCHEDULE_TIME
+
+  if [[ "$NEW_SCHEDULE_DAYS" == "any" ]]; then
+    echo "Please enter the specific day in number for monthly schedules: "
+    read NEW_SCHEDULE_DAY_NUM
+  else
+    NEW_SCHEDULE_DAY_NUM="any"
+  fi
+
+  echo "Please enter the action: "
+  read NEW_SCHEDULE_ACTION
+
+  echo "Please enter the source path: "
+  read NEW_SCHEDULE_SOURCE
+
+  echo "Please enter the tag name for the schedule: "
+  read NEW_SCHEDULE_TAG
+
+  echo "Please enter the backup repo name: "
+  read NEW_SCHEDULE_REPO
+
+  echo "${NEW_SCHEDULE_DAYS}|${NEW_SCHEDULE_TIME}|${NEW_SCHEDULE_DAY_NUM}|${NEW_SCHEDULE_ACTION}|${NEW_SCHEDULE_SOURCE}|${NEW_SCHEDULE_TAG}|${NEW_SCHEDULE_REPO}" >> "${PROJECT_FOLDER}/db/schedule.csv"
+}
+
 restoreFromBackup() {
   viewSnapshotsMenu
 
@@ -167,6 +199,7 @@ selectActionMenu() {
   echo "  2 - View Snapshots"
   echo "  3 - Add New Repo"
   echo "  4 - Restore From Backup"
+  echo "  5 - Add New Schedule"
   read -p "Selection: " SELECTED_ACTION
 
   case "$SELECTED_ACTION" in
@@ -182,6 +215,9 @@ selectActionMenu() {
       ;;
     "4")
       restoreFromBackup
+      ;;
+    "5")
+      addNewSchedule
       ;;
     *)
       echo "Unknown selection!"
