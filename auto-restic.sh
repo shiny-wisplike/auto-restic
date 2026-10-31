@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.14.0"
+SCRIPT_VERSION="0.15.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -11,6 +11,8 @@ RESTIC_EXEC="$RESTIC_EXEC_PATH"
 IS_REPO_EXIST="false"
 BACKUP_REPO_NAME=""
 SNAPSHOT_ID=""
+RESTORE_SOURCE_PATH=""
+RESTORE_TARGET_FOLDER=""
 
 notifyUser() {
   MESSAGE="$SOURCE_TAG has been backed up to $BACKUP_REPO_NAME successfully!"
@@ -59,6 +61,16 @@ listSnapshotFiles() {
   --password-file "$RESTIC_KEY" \
   ls \
   "$SNAPSHOT_ID"
+}
+
+restore() {
+  "$RESTIC_EXEC" \
+  -r "$BACKUP_REPO" \
+  --password-file "$RESTIC_KEY" \
+  restore \
+  "$SNAPSHOT_ID" \
+  --target "$RESTORE_TARGET_FOLDER" \
+  --include "$RESTORE_SOURCE_PATH"
 }
 
 viewSnapshotsMenu() {
@@ -137,12 +149,29 @@ addNewRepo() {
   echo "${NEW_REPO_NAME}|${NEW_REPO_PATH}|${NEW_REPO_KEY_PATH}" >> "${PROJECT_FOLDER}/db/repos.csv"
 }
 
+restoreFromBackup() {
+  viewSnapshotsMenu
+
+  echo ""
+  echo "Please enter one of the displayed paths to restore: "
+  read RESTORE_SOURCE_PATH
+
+  echo "Please enter the target folder to restore to: "
+  read RESTORE_TARGET_FOLDER
+
+  echo "Creating target folder..."
+  mkdir -p "$RESTORE_TARGET_FOLDER"
+
+  restore
+}
+
 selectActionMenu() {
   echo ""
   echo "Please select an action: "
   echo "  1 - Backup"
   echo "  2 - View Snapshots"
   echo "  3 - Add New Repo"
+  echo "  4 - Restore From Backup"
   read -p "Selection: " SELECTED_ACTION
 
   case "$SELECTED_ACTION" in
@@ -155,6 +184,9 @@ selectActionMenu() {
       ;;
     "3")
       addNewRepo
+      ;;
+    "4")
+      restoreFromBackup
       ;;
     *)
       echo "Unknown selection!"
