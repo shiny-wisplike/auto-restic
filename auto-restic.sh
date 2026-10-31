@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.18.0"
+SCRIPT_VERSION="0.18.1"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -27,6 +27,7 @@ checkRepoExist() {
   while IFS='|' read repo_csv_repo_name repo_csv_repo_path repo_csv_repo_key; do
     if [[ "$1" == "$repo_csv_repo_name" ]]; then
       BACKUP_REPO="$repo_csv_repo_path"
+      BACKUP_REPO_NAME="$1"
       RESTIC_KEY="$repo_csv_repo_key"
       IS_REPO_EXIST="true"
       break
@@ -169,10 +170,9 @@ addNewSchedule() {
   echo "Please enter the tag name for the schedule: "
   read NEW_SCHEDULE_TAG
 
-  echo "Please enter the backup repo name: "
-  read NEW_SCHEDULE_REPO
+  selectRepoMenu
 
-  echo "${NEW_SCHEDULE_DAYS}|${NEW_SCHEDULE_TIME}|${NEW_SCHEDULE_DAY_NUM}|${NEW_SCHEDULE_ACTION}|${NEW_SCHEDULE_SOURCE}|${NEW_SCHEDULE_TAG}|${NEW_SCHEDULE_REPO}" >> "${PROJECT_FOLDER}/db/schedule.csv"
+  echo "${NEW_SCHEDULE_DAYS}|${NEW_SCHEDULE_TIME}|${NEW_SCHEDULE_DAY_NUM}|${NEW_SCHEDULE_ACTION}|${NEW_SCHEDULE_SOURCE}|${NEW_SCHEDULE_TAG}|${BACKUP_REPO_NAME}" >> "${PROJECT_FOLDER}/db/schedule.csv"
 }
 
 restoreFromBackup() {
