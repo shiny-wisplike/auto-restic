@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.18.3"
+SCRIPT_VERSION="0.19.0"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -224,6 +224,40 @@ selectActionMenu() {
       ;;
   esac
 }
+
+setup() {
+  mkdir -p "${PROJECT_FOLDER}/db"
+  touch {"${PROJECT_FOLDER}/.env","${PROJECT_FOLDER}/db/schedule.csv","${PROJECT_FOLDER}/db/repos.csv","${PROJECT_FOLDER}/db/excludes.txt"}
+
+  echo "Please enter the hostname: "
+  read SETUP_HOSTNAME
+
+  echo "Please enter the username: "
+  read SETUP_USERNAME
+
+  echo "Please enter the Gotify address: "
+  read SETUP_GOTIFY_ADDRESS
+
+  echo "Please enter the Gotify token: "
+  read SETUP_GOTIFY_TOKEN
+
+  echo "Please enter the Gotify title: "
+  read SETUP_GOTIFY_TITLE
+
+  echo "HOSTNAME=\"${SETUP_HOSTNAME}\"" >> "${PROJECT_FOLDER}/.env"
+  echo "USERNAME=\"${SETUP_USERNAME}\"" >> "${PROJECT_FOLDER}/.env"
+  echo "GOTIFY_ADDRESS=${SETUP_GOTIFY_ADDRESS}" >> "${PROJECT_FOLDER}/.env"
+  echo "GOTIFY_TOKEN=\"${SETUP_GOTIFY_TOKEN}\"" >> "${PROJECT_FOLDER}/.env"
+  echo "GOTIFY_TITLE=\"${SETUP_GOTIFY_TITLE}\"" >> "${PROJECT_FOLDER}/.env"
+
+  echo "Setup completed!"
+  echo "Please add a repo and your first schedule!"
+}
+
+if [ ! -f "${PROJECT_FOLDER}/.env" ];
+  echo "The env file does not exist. Running setup..."
+  setup
+fi
 
 source "${PROJECT_FOLDER}/.env"
 
