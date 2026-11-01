@@ -29,8 +29,8 @@ executeAction() {
 }
 
 checkTime() {
-  CURRENT_TIME=$(date +"%H:%M")
   CSV_ROW="$1"
+  CURRENT_TIME="$2"
 
   IFS='|' read -r $CSV_FIELDS <<< "$CSV_ROW"
 
@@ -46,6 +46,7 @@ checkTime() {
 checkDay() {
   CURRENT_DAY=$(date +"%a")
   CURRENT_DAY_LOWER=${CURRENT_DAY,,}
+  CURRENT_TIME=$(date +"%H:%M")
 
   while IFS='|' read $CSV_FIELDS; do
     IFS=',' read -ra DAYS_ARRAY <<< "$csv_days"
@@ -65,7 +66,7 @@ checkDay() {
           done
           CSV_ROW="${CSV_ROW%|}"
 
-          checkTime "$CSV_ROW"
+          checkTime "$CSV_ROW" "$CURRENT_TIME"
         fi
       fi
     done
