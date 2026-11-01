@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_FOLDER="$(dirname "$(readlink -f "$0")")"
-SCRIPT_VERSION="0.18.2"
+SCRIPT_VERSION="0.18.3"
 BACKUP_REPO=""
 SOURCE_TAG=""
 SOURCE_LOCATION=""
@@ -40,7 +40,7 @@ selectRepoMenu() {
 
   select REPO_NAME in "${REPO_NAMES[@]}"; do
     echo "Selected: $REPO_NAME"
-    checkRepoExists "$REPO_NAME"
+    checkRepoExist "$REPO_NAME"
     break
   done
 }
